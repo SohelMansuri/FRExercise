@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FR Exercise</string>
+    <string name="list_item_id_sample">ID: XXXX</string>
+    <string name="list_item_list_id_sample">List ID: XXXX</string>
+    <string name="list_item_name_sample">Name: XXXX</string>
+    <string name="list_item_id">ID: %1$s</string>
+    <string name="list_item_list_id">List ID: %1$s</string>
+    <string name="list_item_name">Name: %1$s</string>
+
+    <string name="error_fetching_hiring_data">Sorry, there was an issue fetching data.\n\nPlease try again later.</string>
+</resources>
