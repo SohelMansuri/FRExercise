@@ -5,4 +5,4 @@ Results of a successful fetch (from a json file on a server) is displayed using 
 
 * See main source code for MVVM pattern.
 * Note: Unit tests are provided.
-* Also, UI tests using Espresso.
+* Also, UI tests using Espresso and Hilt for test dependency injection.
