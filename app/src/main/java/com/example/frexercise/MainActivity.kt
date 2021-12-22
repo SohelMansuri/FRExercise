@@ -2,6 +2,7 @@ package com.example.frexercise
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.frexercise.adapters.CustomListAdapter
 import com.example.frexercise.databinding.ActivityMainBinding
 import com.example.frexercise.models.ListItem
+import com.example.frexercise.utils.NetworkUtils
 import com.example.frexercise.viewmodels.MainActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,7 +37,12 @@ class MainActivity : AppCompatActivity() {
         setUpAdapterAndRecyclerView()
 
         observeViewModelData()
-        mainActivityViewModel.fetchHiringData()
+
+        if(NetworkUtils.isNetworkAvailable(this)) {
+            mainActivityViewModel.fetchHiringData()
+        } else {
+            Toast.makeText(this, "It looks like you are not connected to the internet.  Please try again later.", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun setUpAdapterAndRecyclerView() {
