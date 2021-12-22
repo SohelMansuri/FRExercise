@@ -3,6 +3,8 @@ package com.example.frexercise.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.frexercise.models.DataItem
+import com.example.frexercise.models.Header
 import com.example.frexercise.models.ListItem
 import com.example.frexercise.networking.HiringService
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,13 +27,13 @@ class MainActivityViewModel @Inject constructor(
     private var loading: MutableLiveData<Boolean> = MutableLiveData(false)
     private var manualRefresh: MutableLiveData<Boolean> = MutableLiveData(false)
     private var successFetchingData: MutableLiveData<Boolean> = MutableLiveData(true)
-    private var listItems: MutableLiveData<ArrayList<ListItem>> = MutableLiveData(arrayListOf())
+    private var listItems: MutableLiveData<ArrayList<DataItem>> = MutableLiveData(arrayListOf())
 
     fun isLoading(): LiveData<Boolean> {
         return loading
     }
 
-    fun getListOfItems(): LiveData<ArrayList<ListItem>> {
+    fun getListOfItems(): LiveData<ArrayList<DataItem>> {
         return listItems
     }
 
@@ -54,10 +56,20 @@ class MainActivityViewModel @Inject constructor(
                 manualRefresh.value = false
                 loading.value = false
                 successFetchingData.value = true
-                val listOfItemsFetched = arrayListOf<ListItem>()
+                val listOfItemsFetched = arrayListOf<DataItem>()
                 response.body()?.let { fetchedList ->
                     val sortedData = ListItem.filterListItems(fetchedList).sorted()
-                    listOfItemsFetched.addAll(sortedData)
+
+                    var headerId = -1
+                    sortedData.forEach {
+                        if(it.listId != null &&
+                            it.listId != headerId) {
+                            listOfItemsFetched.add(Header(it.listId))
+                            headerId = it.listId!!
+                        }
+
+                        listOfItemsFetched.add(it)
+                    }
                 }
                 listItems.value = listOfItemsFetched
             }

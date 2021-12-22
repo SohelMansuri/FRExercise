@@ -11,7 +11,7 @@ data class ListItem(
     var itemId: Int? = null,
     var listId: Int? = null,
     var name: String? = null
-) : Comparable<ListItem> {
+) : DataItem(), Comparable<ListItem> {
 
     /**
      * Comparable is added to allow sorting a list

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.frexercise.adapters.CustomListAdapter
 import com.example.frexercise.databinding.ActivityMainBinding
+import com.example.frexercise.models.DataItem
 import com.example.frexercise.models.ListItem
 import com.example.frexercise.utils.NetworkUtils
 import com.example.frexercise.viewmodels.MainActivityViewModel
@@ -84,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun handleNewListOfItems(listOfItems: ArrayList<ListItem>) {
+    private fun handleNewListOfItems(listOfItems: ArrayList<DataItem>) {
         customListAdapter.replaceData(listOfItems)
     }
 
