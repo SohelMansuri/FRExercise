@@ -39,11 +39,13 @@ class MainActivityViewModel @Inject constructor(
     }
 
     fun fetchHiringData() {
+        loading.value = true
         hiringService.getHiringData().enqueue(object : Callback<List<ListItem>> {
             override fun onResponse(
                 call: Call<List<ListItem>>,
                 response: Response<List<ListItem>>
             ) {
+                loading.value = false
                 successFetchingData.value = true
                 val listOfItemsFetched = arrayListOf<ListItem>()
                 response.body()?.let { fetchedList ->
@@ -54,6 +56,7 @@ class MainActivityViewModel @Inject constructor(
             }
 
             override fun onFailure(call: Call<List<ListItem>>, t: Throwable) {
+                loading.value = false
                 successFetchingData.value = false
             }
         })
