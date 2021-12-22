@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.frexercise.adapters.CustomListAdapter
 import com.example.frexercise.databinding.ActivityMainBinding
 import com.example.frexercise.models.ListItem
@@ -34,18 +35,13 @@ class MainActivity : AppCompatActivity() {
         mainActivityBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainActivityBinding.root)
 
-        setUpAdapterAndRecyclerView()
+        initializeItemsNeededForViews()
 
         observeViewModelData()
-
-        if(NetworkUtils.isNetworkAvailable(this)) {
-            mainActivityViewModel.fetchHiringData()
-        } else {
-            Toast.makeText(this, "It looks like you are not connected to the internet.  Please try again later.", Toast.LENGTH_LONG).show()
-        }
+        refreshHiringData(false)
     }
 
-    private fun setUpAdapterAndRecyclerView() {
+    private fun initializeItemsNeededForViews() {
         customListAdapter = CustomListAdapter(arrayListOf())
 
         mainActivityBinding.mainActivityRecyclerView.apply {
@@ -54,6 +50,19 @@ class MainActivity : AppCompatActivity() {
             addItemDecoration(
                 DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL)
             )
+        }
+
+        mainActivityBinding.mainActivitySwipeRefreshLayout.setOnRefreshListener {
+            refreshHiringData(true)
+        }
+    }
+
+    private fun refreshHiringData(isRefresh: Boolean) {
+        if(NetworkUtils.isNetworkAvailable(this)) {
+            mainActivityViewModel.fetchHiringData(isRefresh)
+        } else {
+            handleManualRefreshUI(false)
+            Toast.makeText(this, "It looks like you are not connected to the internet.  Please connect and try again with swipe to refresh.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -69,6 +78,10 @@ class MainActivity : AppCompatActivity() {
         mainActivityViewModel.wasFetchingDataSuccessful().observe(this, {
             handleSuccessFailureOfFetchUI(it)
         })
+
+        mainActivityViewModel.isManualRefreshing().observe(this, {
+            handleManualRefreshUI(it)
+        })
     }
 
     private fun handleNewListOfItems(listOfItems: ArrayList<ListItem>) {
@@ -78,6 +91,10 @@ class MainActivity : AppCompatActivity() {
     private fun handleSuccessFailureOfFetchUI(success: Boolean) {
         mainActivityBinding.mainActivityRecyclerView.visibility = if(success) View.VISIBLE else View.GONE
         mainActivityBinding.mainActivityErrorTextView.visibility = if(success) View.GONE else View.VISIBLE
+    }
+
+    private fun handleManualRefreshUI(isManualRefresh: Boolean) {
+        mainActivityBinding.mainActivitySwipeRefreshLayout.isRefreshing = isManualRefresh
     }
 
     private fun handleProgressBarUI(show: Boolean) {

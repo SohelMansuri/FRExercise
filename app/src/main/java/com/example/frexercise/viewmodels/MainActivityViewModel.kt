@@ -23,6 +23,7 @@ class MainActivityViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var loading: MutableLiveData<Boolean> = MutableLiveData(false)
+    private var manualRefresh: MutableLiveData<Boolean> = MutableLiveData(false)
     private var successFetchingData: MutableLiveData<Boolean> = MutableLiveData(true)
     private var listItems: MutableLiveData<ArrayList<ListItem>> = MutableLiveData(arrayListOf())
 
@@ -38,13 +39,19 @@ class MainActivityViewModel @Inject constructor(
         return successFetchingData
     }
 
-    fun fetchHiringData() {
+    fun isManualRefreshing(): LiveData<Boolean> {
+        return manualRefresh
+    }
+
+    fun fetchHiringData(isManualRefresh: Boolean) {
+        manualRefresh.value = isManualRefresh
         loading.value = true
         hiringService.getHiringData().enqueue(object : Callback<List<ListItem>> {
             override fun onResponse(
                 call: Call<List<ListItem>>,
                 response: Response<List<ListItem>>
             ) {
+                manualRefresh.value = false
                 loading.value = false
                 successFetchingData.value = true
                 val listOfItemsFetched = arrayListOf<ListItem>()
@@ -56,6 +63,7 @@ class MainActivityViewModel @Inject constructor(
             }
 
             override fun onFailure(call: Call<List<ListItem>>, t: Throwable) {
+                manualRefresh.value = false
                 loading.value = false
                 successFetchingData.value = false
             }
